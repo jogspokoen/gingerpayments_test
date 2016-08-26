@@ -32,12 +32,12 @@ person = AddressBookPerson(first_name="First Name",
 
 email, phone numbers or street adresses can be added or removed from person's entry in Address Book:
 ```
-add_street_adress()
-add_email_adress()
-add_phone_number()
-remove_street_adress()
-remove_email_adress()
-remove_phone_number()
+person.add_street_adress()
+person.add_email_adress()
+person.add_phone_number()
+person.remove_street_adress()
+person.remove_email_adress()
+person.remove_phone_number()
 ```
 phone number and email will be validated before adding, or throw **AddressBookInvalidDataException** exception
 
