@@ -60,7 +60,7 @@ class AddressBook:
 
     def remove_person(self, person):
         if person.key in self.persons:
-            del(self.persons[person.key])
+            del (self.persons[person.key])
         else:
             raise AddressBookValueError(person)
 
@@ -73,7 +73,7 @@ class AddressBook:
 
     def remove_group(self, group):
         if group.name in self.groups:
-            del(self.groups[group.name])
+            del (self.groups[group.name])
         else:
             raise AddressBookValueError(group.name)
 
@@ -94,11 +94,13 @@ class AddressBook:
 
     def get_group_members(self, group):
         group_keys = self.relations.get(group.name, [])
-        return [self.persons.get(person_key) for person_key in group_keys]
+        return [self.persons.get(person_key) for person_key in
+                group_keys]
 
     def get_person_groups(self, person):
-        return [self.groups[group_key] for group_key in self.relations if
-         person.key in self.relations[group_key]]
+        return [self.groups[group_key] for group_key in self.relations
+                if
+                person.key in self.relations[group_key]]
 
     def get_persons_by_email(self, keyword):
         return [person for person in self.persons if
@@ -107,7 +109,7 @@ class AddressBook:
     def get_persons_by_name(self, first_name=None, last_name=None):
         if first_name is None:
             return [person for person in self.persons
-                if person.last_name == last_name]
+                    if person.last_name == last_name]
         elif last_name is None:
             return [person for person in self.persons
                     if person.first_name == first_name]
