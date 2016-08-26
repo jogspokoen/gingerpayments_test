@@ -63,13 +63,18 @@ address_book.remove_group(group)
 ```
 Address book can add or remove persons to groups:
 ```
-add_person_to_group()
-remove_person_from_group()
+address_book.add_person_to_group(person, group)
+remove_person_from_group(person, group)
 ```
 
 Person can be found by First name, Last name or both:
 ```
-get_persons_by_name(first_name="First name", last_name="Last name")
+address_book.get_persons_by_name(first_name="First name",
+last_name="Last name")
+```
+Person can be found by email or it's prefix:
+```
+address_book.get_persons_by_email('email')
 ```
 Address book can find group's members:
 ```
@@ -79,6 +84,3 @@ Address book can find the groups the person belongs to:
 ```
 get_person_groups(person)
 ```
-Find person by name (can supply either first name, last name, or both).
-Find person by email address (can supply either the exact string or a prefix string, ie. both "alexander@company.com" and "alex" should work).
-
