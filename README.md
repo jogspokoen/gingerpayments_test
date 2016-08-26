@@ -33,9 +33,9 @@ remove_street_adress()
 remove_email_adress()
 remove_phone_number()
 ```
-phone number and email will be validated before adding, or throw *AddressBookInvalidDataException* exception
+phone number and email will be validated before adding, or throw **AddressBookInvalidDataException** exception
 
-validation rules is saved in properties *email_validation_rule* and *phone_validation_rule* and can be overrided with child classes
+validation rules is saved in properties **email_validation_rule** and **phone_validation_rule** and can be overrided with child classes
 
 #AddressBookGroup
 name is mandatory param for group:
