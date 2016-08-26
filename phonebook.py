@@ -27,11 +27,12 @@ class AddressBookDuplicateException(AddressBookException):
 
 class AddressBook:
     storage = None
-    persons = {}
-    groups = {}
-    relations = {}
 
     def __init__(self, storage=None):
+        self.persons = {}
+        self.groups = {}
+        self.relations = {}
+
         if storage:
             self.storage = storage
         else:
@@ -61,6 +62,9 @@ class AddressBook:
     def remove_person(self, person):
         if person.key in self.persons:
             del (self.persons[person.key])
+            for group_name in self.groups:
+                if person.key in self.relations.get(group_name):
+                    self.relations[group_name].remove(person.key)
         else:
             raise AddressBookValueError(person)
 
@@ -74,6 +78,7 @@ class AddressBook:
     def remove_group(self, group):
         if group.name in self.groups:
             del (self.groups[group.name])
+            del (self.relations[group.name])
         else:
             raise AddressBookValueError(group.name)
 
@@ -99,22 +104,21 @@ class AddressBook:
 
     def get_person_groups(self, person):
         return [self.groups[group_key] for group_key in self.relations
-                if
-                person.key in self.relations[group_key]]
+                if person.key in self.relations[group_key]]
 
     def get_persons_by_email(self, keyword):
-        return [person for person in self.persons if
+        return [person for person in self.persons.values() if
                 person.has_email(keyword)]
 
     def get_persons_by_name(self, first_name=None, last_name=None):
         if first_name is None:
-            return [person for person in self.persons
+            return [person for person in self.persons.values()
                     if person.last_name == last_name]
         elif last_name is None:
-            return [person for person in self.persons
+            return [person for person in self.persons.values()
                     if person.first_name == first_name]
         else:
-            return [person for person in self.persons
+            return [person for person in self.persons.values()
                     if person.first_name == first_name
                     and person.last_name == last_name]
 
@@ -139,9 +143,6 @@ class AddressBookPickleStorage:
 class AddressBookPerson:
     first_name = ''
     last_name = ''
-    street_addresses = []
-    email_addresses = []
-    phone_numbers = []
 
     email_validation_rule = \
         r'^([a-z0-9_\.-]+)@([a-z0-9_\.-]+)\.([a-z\.]{2,6})$'
@@ -155,17 +156,20 @@ class AddressBookPerson:
 
         self.first_name = first_name
         self.last_name = last_name
+        self.street_addresses = []
+        self.email_addresses = []
+        self.phone_numbers = []
 
         if street_addresses:
             self.street_addresses = street_addresses
 
         if email_addresses:
             for email in email_addresses:
-                self.email_addresses.append(email)
+                self.add_email_adress(email)
 
         if phone_numbers:
             for phone in phone_numbers:
-                self.phone_numbers.append(phone)
+                self.add_phone_number(phone)
 
     @property
     def key(self):

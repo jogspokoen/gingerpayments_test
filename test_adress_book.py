@@ -6,8 +6,8 @@ from phonebook import AddressBook, AddressBookPickleStorage, \
     AddressBookPerson, AddressBookGroup, \
     AddressBookInvalidDataException, AddressBookValueError
 
+class PickleStorageTest(unittest.TestCase):
 
-class SelfDestructiveStorageTest:
     test_filename = 'test_file.pkl'
     test_data = {'persons': 'test'}
 
@@ -15,9 +15,6 @@ class SelfDestructiveStorageTest:
         if os.path.isfile(self.test_filename):
             os.remove(self.test_filename)
 
-
-class PickleStorageTest(SelfDestructiveStorageTest,
-                        unittest.TestCase):
     def test_storage_empty(self):
         storage = AddressBookPickleStorage(None)
         self.assertEqual(storage.data, AddressBookPickleStorage.data)
@@ -44,7 +41,20 @@ class PickleStorageTest(SelfDestructiveStorageTest,
         self.assertEqual(storage2.data, self.test_data)
 
 
-class AdressBookTest(SelfDestructiveStorageTest, unittest.TestCase):
+class AdressBookTest(unittest.TestCase):
+
+    test_filename = 'test_file.pkl'
+    test_data = {'persons': 'test'}
+
+    def setUp(self):
+        storage = AddressBookPickleStorage(self.test_filename)
+        self.address_book = AddressBook(storage)
+
+
+    def tearDown(self):
+        if os.path.isfile(self.test_filename):
+            os.remove(self.test_filename)
+
     def test_adressbook_save(self):
         # create adress book and save it
         self.address_book.persons = self.test_data['persons']
@@ -56,7 +66,7 @@ class AdressBookTest(SelfDestructiveStorageTest, unittest.TestCase):
         self.assertEqual(address_book2.persons,
                          self.test_data['persons'])
 
-    def test_add_remove_person(self):
+    def test_person(self):
         person_1 = AddressBookPerson(first_name="Freddie",
                                      last_name="Mercury")
 
@@ -81,7 +91,7 @@ class AdressBookTest(SelfDestructiveStorageTest, unittest.TestCase):
         with self.assertRaises(AddressBookValueError):
             self.address_book.remove_person(person)
 
-    def test_add_remove_group(self):
+    def test_group(self):
         group_1 = AddressBookGroup('friends')
         group_2 = AddressBookGroup('enemies')
         group_3 = AddressBookGroup('pizzas')
@@ -160,7 +170,7 @@ class AdressBookTest(SelfDestructiveStorageTest, unittest.TestCase):
         self.assertIn(group_2, groups)
         self.assertNotIn(group_3, groups)
 
-    def find_person_by_email_part(self):
+    def test_find_person_by_email_part(self):
         person_1 = AddressBookPerson(first_name="Thome",
                                      last_name="Yorke",
                                      email_addresses=[
@@ -188,7 +198,7 @@ class AdressBookTest(SelfDestructiveStorageTest, unittest.TestCase):
         self.assertIn(person_3, persons)
         self.assertNotIn(person_2, persons)
 
-    def find_person_by_name(self):
+    def test_find_person_by_name(self):
         person_1 = AddressBookPerson(first_name="Mike",
                                      last_name="Tyson")
         person_2 = AddressBookPerson(first_name="Mike",
@@ -201,6 +211,7 @@ class AdressBookTest(SelfDestructiveStorageTest, unittest.TestCase):
         self.address_book.add_person(person_1)
         self.address_book.add_person(person_2)
         self.address_book.add_person(person_3)
+        self.address_book.add_person(person_4)
 
         by_first_name = self.address_book.get_persons_by_name(
             first_name="Mike")
@@ -210,18 +221,14 @@ class AdressBookTest(SelfDestructiveStorageTest, unittest.TestCase):
             first_name="Mike", last_name="Shinoda")
 
         self.assertIn(person_1, by_first_name)
-        self.assertIn(person_3, by_first_name)
+        self.assertIn(person_2, by_first_name)
         self.assertIn(person_4, by_first_name)
-        self.assertNotIn(person_2, by_first_name)
+        self.assertNotIn(person_3, by_first_name)
 
         self.assertIn(person_1, by_last_name)
         self.assertNotIn(person_2, by_last_name)
 
         self.assertIn(person_2, by_both)
-
-    def setUp(self):
-        storage = AddressBookPickleStorage(self.test_filename)
-        self.address_book = AddressBook(storage)
 
 
 class PersonTest(unittest.TestCase):
@@ -285,6 +292,16 @@ class PersonTest(unittest.TestCase):
     def test_phone_validation_fails(self):
         with self.assertRaises(AddressBookInvalidDataException):
             self.person.add_phone_number("001!!!")
+
+    def test_email_search(self):
+        email_list = [
+            'abc@abc.com',
+            'abc@xyz.com',
+        ]
+        self.person.add_email_adress(email_list[0])
+        self.person.add_email_adress(email_list[1])
+        self.assertTrue(self.person.has_email('abc'))
+        self.assertFalse(self.person.has_email('xyz'))
 
 
 if __name__ == "__main__":
