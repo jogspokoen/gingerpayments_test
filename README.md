@@ -1,3 +1,9 @@
+#Install
+import classes in order to use module:
+```
+from phonebook import AddressBook, AddressBookPickleStorage, AddressBookPerson, AddressBookGroup, AddressBookInvalidDataException, AddressBookValueError
+```
+
 #AddressBookPerson
 
 first and last names are mandatory params:
