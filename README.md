@@ -90,3 +90,19 @@ Address book can find the groups the person belongs to:
 ```
 get_person_groups(person)
 ```
+
+#Design-only questions:
+Find person by email address (can supply any substring, ie. "comp" should work assuming "alexander@company.com" is an email address in the address book) - discuss how you would implement this without coding the solution.
+
+string method .find() returns position of substring
+0 position means substring is a prefix
+any positive value means substring is present on string
+My solution is to check 
+```
+email.find(keyword) != -1 
+```
+instead of 
+```
+email.find(keyword) == 0
+```
+in person.has_email() method
